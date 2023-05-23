@@ -15,6 +15,13 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- icon-->
     <link rel="shortcut icon" href="images/iconbook.png" type="image/x-icon">
+    <!-- Start of HubSpot Embed Code -->
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js-na1.hs-scripts.com/39814399.js"></script>
+    <!-- End of HubSpot Embed Code -->
+
+    <!-- css search -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
 
 </head>
 <body>
@@ -30,6 +37,7 @@
             <a href="#gallery">Géneros</a>
             <a href="#reviews">Reseñas</a>
             <a href="#order">Ordenar</a>
+            <a href="#search">Busqueda</a>
         </nav>
 
         <div id="menu-btn" class="fas fa-bars"></div>
@@ -354,6 +362,62 @@
 
 
     <!-- reviews -->
+    
+    <!-- search -->
+    <section class="search" id="search">
+        <div class="row">
+            <div class="col-md-12 text-center mt-5 mb-5">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" id="buscadorvoz" placeholder="Ingresa un Término">
+                <button class="btn btn-outline-secondary" type="button" id="start" onclick="iniciarGrabacion()">🎙️</button>
+              </div>
+              <div id="contenedor"></div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    
+        <script type="text/javascript">
+          
+          var reconocimiento = new webkitSpeechRecognition();
+          reconocimiento.onresult = function(event) {
+            var decirTexto = "";
+            for (var i = event.resultIndex; i < event.results.length; i++) {
+              if (event.results[i].isFinal) {
+                decirTexto = event.results[i][0].transcript;
+              } else {
+                decirTexto += event.results[i][0].transcript;
+              }
+            }
+            document.getElementById('buscadorvoz').value = decirTexto;
+            buscarDatos(decirTexto);
+          }
+    
+          function iniciarGrabacion() {
+            document.getElementById('buscadorvoz').value = "";
+            document.getElementById('buscadorvoz').focus();
+            reconocimiento.start();
+          }
+    
+          function buscarDatos(decirTexto) {
+            var xhr = new XMLHttpRequest();
+            var url = 'obtenerDatos.php';
+            var params = 'buscadorvoz=' + decirTexto;
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function(responseText) {
+              if (this.readyState == 4 && this.status == 200) {
+                const datos = this.responseText;
+                document.getElementById('contenedor').innerHTML = datos;
+              }
+            }
+            xhr.send(params);
+          }
+          
+        </script>
+
+    </section>
+    <!-- search -->
+
 
     <!-- order -->
 
@@ -485,6 +549,7 @@
     <script>
         lightGallery(document.querySelector('.gallery .gallery-container'));
     </script>
+   
 
 </body>
 </html>    
